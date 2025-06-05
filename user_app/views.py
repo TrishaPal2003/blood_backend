@@ -9,9 +9,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-class DonnerViewset(viewsets.ModelViewSet):
-    queryset = models.Donner.objects.all()
-    serializer_class = serializers.DonnerSerializer
+# class DonnerViewset(viewsets.ModelViewSet):
+#     queryset = models.Donner.objects.all()
+#     serializer_class = serializers.DonnerSerializer
 
     
 class UserRegistratioApiView(APIView):

@@ -1,5 +1,5 @@
 from django.db import models
-from .constant import STATUS_CHOICE, STATUS_DONATED, BLOOD_GROUP_CHOICE
+from .constant import BLOOD_GROUP_CHOICE
 
 from django.contrib.auth.models import User  
 

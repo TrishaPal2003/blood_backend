@@ -4,7 +4,7 @@ from .import views
 
 router = DefaultRouter()
 
-router.register('list',views.DonnerViewset)
+# router.register('donnors',views.DonnerViewset)
 urlpatterns = [
     path('',include(router.urls)),
     path('register/', views.UserRegistratioApiView.as_view(), name='register'),

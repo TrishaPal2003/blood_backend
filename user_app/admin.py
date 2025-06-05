@@ -1,8 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import BloodGroup,Donner,DonationHistory
+from .models import Donner
 
-admin.site.register(BloodGroup)
+
 admin.site.register(Donner)
-admin.site.register(DonationHistory)
