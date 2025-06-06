@@ -28,5 +28,4 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         user = User.objects.create_user(**validated_data)
         Donner.objects.create(user = user, blood_group = blood_group)
-        
         return user

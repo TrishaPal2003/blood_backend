@@ -7,12 +7,15 @@ from .import models
 from .import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
 
-
-# class DonnerViewset(viewsets.ModelViewSet):
-#     queryset = models.Donner.objects.all()
-#     serializer_class = serializers.DonnerSerializer
-
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.contrib.auth.models import User
+from django.shortcuts import redirect
+from django.contrib.auth import get_user_model
     
 class UserRegistratioApiView(APIView):
     serializer_class = serializers.RegistrationSerializer
@@ -23,6 +26,33 @@ class UserRegistratioApiView(APIView):
         if serializer.is_valid():
             user = serializer.save()
             print(user)
+            token = default_token_generator.make_token(user)
+            print("token", token)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            print("uid", uid)
+            confirm_link = f"http://127.0.0.1:8000/donner/active/{uid}/{token}"
+            email_subject = "confirm your email"
+            email_body = render_to_string('confirm_email.html',{'confirm_link':confirm_link})
+            email = EmailMultiAlternatives(email_subject, '', to=[user.email])
+            email.attach_alternative(email_body, "text/html")
+            email.send()
+            return Response("Check your mail for confirmation")
             return Response("done")
             
         return Response(serializer.errors)
+    
+User = get_user_model()
+
+def activate(request, uid64, token):
+    try:
+        uid = urlsafe_base64_decode(uid64).decode()
+        user = User.objects.get(pk=uid)
+    except (User.DoesNotExist, ValueError, TypeError, OverflowError):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return redirect('register')  # or 'login' or 'activation_success'
+    else:
+        return redirect('register')  
