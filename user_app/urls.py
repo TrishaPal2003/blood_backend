@@ -8,6 +8,7 @@ router = DefaultRouter()
 urlpatterns = [
     path('',include(router.urls)),
     path('register/', views.UserRegistratioApiView.as_view(), name='register'),
+    path('login/', views.UserLogin.as_view(), name='login'),
     path('active/<uid64>/<token>/',views.activate,name='activate'),
     
 ]

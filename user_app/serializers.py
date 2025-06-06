@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 from .models import Donner
 from .constant import BLOOD_GROUP_CHOICE
+from rest_framework import serializers
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -29,3 +30,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         Donner.objects.create(user = user, blood_group = blood_group)
         return user
+    
+class UserLoginSerializer(serializers.Serializer):  
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(required=True)

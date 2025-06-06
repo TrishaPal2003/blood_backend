@@ -16,6 +16,9 @@ from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+from .serializers import UserLoginSerializer
     
 class UserRegistratioApiView(APIView):
     serializer_class = serializers.RegistrationSerializer
@@ -56,3 +59,20 @@ def activate(request, uid64, token):
         return redirect('register')  # or 'login' or 'activation_success'
     else:
         return redirect('register')  
+    
+class UserLogin(APIView):
+    def post(self, request):
+        serializer = UserLoginSerializer(data=request.data)
+        if serializer.is_valid():
+            username = serializer.validated_data['username']
+            password = serializer.validated_data['password']
+
+            user = authenticate(username=username, password=password)
+
+            if user:
+                token, created = Token.objects.get_or_create(user=user)
+                return Response({'token': token.key, 'user_id': user.id})
+            else:
+                return Response({'error': "Invalid credentials"}, status=401)
+
+        return Response(serializer.errors, status=400)
