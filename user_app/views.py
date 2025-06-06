@@ -16,9 +16,10 @@ from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.contrib.auth import get_user_model
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, logout
 from rest_framework.authtoken.models import Token
 from .serializers import UserLoginSerializer
+from django.http import HttpResponse
     
 class UserRegistratioApiView(APIView):
     serializer_class = serializers.RegistrationSerializer
@@ -76,3 +77,15 @@ class UserLogin(APIView):
                 return Response({'error': "Invalid credentials"}, status=401)
 
         return Response(serializer.errors, status=400)
+class UserLogout(APIView):
+    def get(self, request):
+        if request.user.is_authenticated:
+            try:
+                Token.objects.get(user=request.user).delete()
+            except Token.DoesNotExist:
+                pass 
+            
+            logout(request)
+            return redirect('login')
+        else:
+            return HttpResponse("You are not logged in.", status=401)
