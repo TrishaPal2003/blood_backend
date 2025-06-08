@@ -1,7 +1,12 @@
 from django.urls import path
+
 from . import views
 
 urlpatterns = [
-    path('wall/', views.BloodRequestView.as_view(), name='blood-wall'),
-    path('history/', views.DonationHistoryListCreateView.as_view(), name='donation-history'),
+    path("post/", views.BloodRequestView.as_view(), name="bloodrequestpost"),
+    path(
+        "history/",
+        views.DonationHistoryListCreateView.as_view(),
+        name="donationhistory",
+    ),
 ]
